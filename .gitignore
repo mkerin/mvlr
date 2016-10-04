@@ -2,6 +2,7 @@
 build/*
 bin/*
 data/*
+CMakeLists.txt
 
 # Compiled Object files
 *.slo
