@@ -41,57 +41,31 @@ int main (int argc, char *argv[]) {
   // reading data from file
   X = readMatrix(env_filepath, X, header_in_file);
   Y = readMatrix(trait_filepath, Y, header_in_file);
-  std::cout << "\nPrinting X" << std::endl;
-  std::cout << X << std::endl;
   
   // center and scale
-  
   Eigen::RowVectorXd means = X.colwise().sum() / X.rows();
-  std::cout << "\nPrinting means" << std::endl;
-  std::cout << means << std::endl;
   X.rowwise() -= means;
-  std::cout << "\nPrinting X" << std::endl;
-  std::cout << X << std::endl;
   
   Eigen::MatrixXd covs;
   if(X.rows() > 1){
-    /*
-    std::cout << "\nPrinting sqs" << std::endl;
-    std::cout << (X.array() * X.array()) << std::endl;
-    
-    std::cout << "\nPrinting sum of sqs" << std::endl;
-    std::cout << (X.array() * X.array()).colwise().sum() << std::endl;
-    */
     covs = (X.array() * X.array()).colwise().sum() / (X.rows() - 1);
   } else {
     covs = (X.array() * X.array()).colwise().sum() / (X.rows());
   }
   
-  //std::cout << "\nPrinting covs" << std::endl;
-  //std::cout << covs << std::endl;
-  
   Eigen::MatrixXd sds = covs.array().sqrt();
-  //std::cout << "\nPrinting sds" << std::endl;
-  //std::cout << sds << std::endl;
   
   for(int i = 0; i < sds.size(); i++){
     if(*(sds.data() + i) != 0) *(sds.data() + i) = 1 / *(sds.data() + i);
   }
-  std::cout << "\nPrinting sds" << std::endl;
-  std::cout << sds << std::endl;
   
   X = (X * sds.asDiagonal()).eval();
-  std::cout << "\nPrinting X" << std::endl;
-  std::cout << X << std::endl;
   
   
   // performing mvlr
-  printf("X: (%li, %li) \n", X.rows(), X.cols());
   R = X.transpose() * X;
   y_hat = X.transpose() * Y;
   Eigen::MatrixXd beta_hat = R.ldlt().solve(y_hat);
-  //Eigen::MatrixXd beta_hat = Eigen::MatrixXd::Zero(X.rows(), X.cols());
-  
   
   // Output to console.
   std::vector<std::string> covariates, traits;
@@ -102,10 +76,8 @@ int main (int argc, char *argv[]) {
   if(infile.is_open()){
     getline(infile, line);
     lineStream.str(line);
-    puts(line.c_str());
     while(lineStream >> word){
       covariates.push_back(word);
-      puts(word.c_str());
     }
     lineStream.clear();
     infile.close();
@@ -114,20 +86,12 @@ int main (int argc, char *argv[]) {
   if(infile.is_open()){
     getline(infile, line);
     lineStream.str(line);
-    puts(line.c_str());
     while(lineStream >> word){
       traits.push_back(word);
-      puts(word.c_str());
     }
     lineStream.clear();
     infile.close();
   }
-  
-  std::cout << beta_hat << std::endl;
-  
-  Eigen::MatrixXd::Index maxRow, maxCol;
-  //beta_hat.colwise().maxCoeff(&maxRow, &maxCol);
-  std::cout << "Max elements in row: " << beta_hat.colwise().maxCoeff() << std::endl;
   
   std::vector<Eigen::MatrixXd::Index> maxRows(beta_hat.cols());
   std::vector<double> maxVals(beta_hat.cols());
@@ -137,13 +101,6 @@ int main (int argc, char *argv[]) {
            traits[c].c_str(), covariates[maxRows[c]].c_str(), maxVals[c]);
   }
   
-  /*
-  std::vector<std::string>::iterator it;
-  for(it = traits.begin(); it != traits.end(); it++) std::cout << *it << " ";
-  std::cout << std::endl;
-  for(it = covariates.begin(); it != covariates.end(); it++) std::cout << *it << " ";
-  std::cout << std::endl;
-  */
   // saving output to file.
   infile.open(env_filepath);
   std::ofstream outfile(res_filepath);
