@@ -43,23 +43,8 @@ int main (int argc, char *argv[]) {
   Y = readMatrix(trait_filepath, Y, header_in_file);
   
   // center and scale
-  Eigen::RowVectorXd means = X.colwise().sum() / X.rows();
-  X.rowwise() -= means;
-  
-  Eigen::MatrixXd covs;
-  if(X.rows() > 1){
-    covs = (X.array() * X.array()).colwise().sum() / (X.rows() - 1);
-  } else {
-    covs = (X.array() * X.array()).colwise().sum() / (X.rows());
-  }
-  
-  Eigen::MatrixXd sds = covs.array().sqrt();
-  
-  for(int i = 0; i < sds.size(); i++){
-    if(*(sds.data() + i) != 0) *(sds.data() + i) = 1 / *(sds.data() + i);
-  }
-  
-  X = (X * sds.asDiagonal()).eval();
+  X = centerMat(X);
+  //Y = centerMat(Y);
   
   
   // performing mvlr
