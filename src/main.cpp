@@ -14,6 +14,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cmath>
+#include <cstdlib>
 
 // My functions
 #include "functions.hpp"
@@ -38,14 +39,35 @@ int main (int argc, char *argv[]) {
   if(argc > 3) strcpy(res_filepath, argv[3]);
   else strcpy(res_filepath, "data/mvlr_coefficients.txt");
   
+  //
+  
+  std::string word;
+  std::cout << "Printing input from cin below" << std::endl;
+  while(std::cin >> word){
+    puts(word.c_str());
+  }
+  
+  
+  
+  
+  
+  /*
   // reading data from file
   X = readMatrix(env_filepath, X, header_in_file);
   Y = readMatrix(trait_filepath, Y, header_in_file);
   
   // center and scale
   X = centerMat(X);
-  //Y = centerMat(Y);
+  Y = centerMat(Y);
   
+  // clustering
+  int K = 3;
+  Eigen::VectorXi clust(X.rows());
+  Eigen::MatrixXd centroids(K, X.cols());
+  std::vector<int> W;
+  
+  W = myKMeans(X, K, clust, centroids);
+
   
   // performing mvlr
   R = X.transpose() * X;
@@ -97,7 +119,7 @@ int main (int argc, char *argv[]) {
     outfile << beta_hat << std::endl;
     outfile.close();
   }
-  
+  */
   return 0;
 }
 

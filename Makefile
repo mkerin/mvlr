@@ -6,7 +6,7 @@ LIBS = -I ./tools/eigen
 CXXFLAGS = --std=c++0x
 OBJDIR = build
 
-FUNCS = build/func_readMatrix.o build/func_writeMatrix.o build/func_genData.o build/func_centerMat.o
+FUNCS = build/func_centerMat.o build/func_genData.o build/func_readMatrix.o build/func_writeMatrix.o
 
 all: bin/main
 
